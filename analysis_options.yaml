@@ -7,6 +7,7 @@ analyzer:
 
 linter:
   rules:
+    always_use_package_imports: false
     prefer_relative_imports: true
     public_member_api_docs: false
     sort_constructors_first: false

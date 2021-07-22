@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'views/dashboard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,8 +16,11 @@ class MyApp extends StatelessWidget {
       title: 'Gas Tracker',
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
+        appBarTheme: const AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+        ),
       ),
-      home: const Scaffold(),
+      home: const DashboardPage(),
     );
   }
 }
