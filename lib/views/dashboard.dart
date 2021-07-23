@@ -25,24 +25,24 @@ class _GasCards extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 128, vertical: 40),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: const [
+        children: [
           GasCard(
             iconData: Icons.bolt,
             title: 'Fast',
             color: Colors.deepOrange,
-            gwei: 12,
+            gwei: (info) => info.fast,
           ),
           GasCard(
             iconData: Icons.drive_eta,
             title: 'Normal',
             color: Colors.blue,
-            gwei: 10,
+            gwei: (info) => info.normal,
           ),
           GasCard(
             iconData: Icons.directions_walk,
             title: 'Slow',
             color: Colors.purple,
-            gwei: 9,
+            gwei: (info) => info.slow,
           ),
         ],
       ),

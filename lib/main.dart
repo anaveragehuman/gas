@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'bloc/gas_cubit.dart';
 import 'views/dashboard.dart';
 
 void main() {
@@ -12,15 +14,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Gas Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
-        appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
+    return BlocProvider(
+      create: (_) => GasCubit()..fetchGas(),
+      child: MaterialApp(
+        title: 'Gas Tracker',
+        theme: ThemeData(
+          primarySwatch: Colors.blueGrey,
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle.light,
+          ),
         ),
+        home: const DashboardPage(),
       ),
-      home: const DashboardPage(),
     );
   }
 }
