@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc/gas_cubit.dart';
+import 'bloc/timer_cubit.dart';
 import 'views/dashboard.dart';
 
 void main() {
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => GasCubit()..fetchGas(),
+      create: (_) => GasCubit(TimerCubit(5)),
       child: MaterialApp(
         title: 'Gas Tracker',
         theme: ThemeData(

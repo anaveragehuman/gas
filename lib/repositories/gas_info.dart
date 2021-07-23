@@ -1,17 +1,18 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../services/etherscan/gastracker.dart';
 
-class GasInfo {
-  final String lastBlock;
-  final int? fast;
-  final int? normal;
-  final int? slow;
+part 'gas_info.freezed.dart';
 
-  const GasInfo({
-    required this.lastBlock,
-    required this.fast,
-    required this.normal,
-    required this.slow,
-  });
+@freezed
+@immutable
+class GasInfo with _$GasInfo {
+  const factory GasInfo({
+    required String lastBlock,
+    required int? fast,
+    required int? normal,
+    required int? slow,
+  }) = _GasInfo;
 
   factory GasInfo.fromOracle(GasOracle oracle) => GasInfo(
         lastBlock: oracle.lastBlock,

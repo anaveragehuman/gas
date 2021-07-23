@@ -33,6 +33,7 @@
 pubspec.lock
 
 # Generated files
+*.freezed.dart
 *.g.dart
 
 # Web related
