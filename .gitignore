@@ -32,6 +32,9 @@
 /build/
 pubspec.lock
 
+# Generated files
+*.g.dart
+
 # Web related
 lib/generated_plugin_registrant.dart
 

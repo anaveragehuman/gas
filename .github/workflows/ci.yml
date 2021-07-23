@@ -30,8 +30,14 @@ jobs:
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
 
+      - name: Run code generators
+        run: flutter pub run build_runner build
+
       - name: Analyze project source
         run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
 
       - name: Build for Android
         if: matrix.os == 'ubuntu-latest'
