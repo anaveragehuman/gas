@@ -38,6 +38,7 @@ class GasCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 BlocBuilder<GasCubit, GasState>(
+                  buildWhen: (prev, curr) => gwei(curr.info) != gwei(prev.info),
                   builder: (_, state) => _GasText(
                     gwei(state.info)?.toString() ?? '--',
                     color: color,
