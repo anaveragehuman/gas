@@ -11,12 +11,17 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  static final TimerCubit _timer = TimerCubit(5);
+
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => GasCubit(TimerCubit(5)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => _timer),
+        BlocProvider(create: (_) => GasCubit(_timer)),
+      ],
       child: MaterialApp(
         title: 'Gas Tracker',
         theme: ThemeData(

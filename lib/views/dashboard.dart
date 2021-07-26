@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/gascard.dart';
+import '../widgets/timer_appbar.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -10,6 +11,10 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gas Price (in Gwei)'),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(4),
+          child: TimerProgressBar(),
+        ),
       ),
       body: const _GasCards(),
     );
