@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/gascard.dart';
 import '../widgets/timer_appbar.dart';
+import 'preferences.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -17,6 +18,13 @@ class DashboardPage extends StatelessWidget {
         ),
       ),
       body: const _GasCards(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.push<void>(
+          context,
+          MaterialPageRoute(builder: (_) => const PrefPage()),
+        ),
+        child: const Icon(Icons.settings),
+      ),
     );
   }
 }
