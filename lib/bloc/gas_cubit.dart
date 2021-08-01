@@ -36,7 +36,7 @@ class GasCubit extends Cubit<GasState> {
   }
 
   GasCubit(this.timer) : super(const GasState(status: GasStatus.failure)) {
-    fetchGas().then((_) {
+    fetchGas().whenComplete(() {
       timer.start();
       timerSubscription = timer.stream.listen(onTimerChanged);
     });
@@ -56,7 +56,7 @@ class GasCubit extends Cubit<GasState> {
       final oracle = await getGasInfo();
       final info = GasInfo.fromOracle(oracle);
       emit(GasState(status: GasStatus.success, info: info));
-    } on Exception {
+    } catch (_) {
       emit(state.copyWith(status: GasStatus.failure, isLoading: false));
     }
   }
