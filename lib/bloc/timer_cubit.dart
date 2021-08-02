@@ -2,21 +2,29 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'pref_cubit.dart';
+
 /// Produces a [Stream] that counts down from [ticks] once every second.
 Stream<void> ticker({required int ticks}) =>
     Stream<void>.periodic(const Duration(seconds: 1)).take(ticks);
 
 class TimerCubit extends Cubit<int> {
-  final int initial;
+  final PrefCubit prefs;
+  late final StreamSubscription<PrefState> _prefSubscription;
+
+  int get initial => prefs.state.refreshRate;
   static const int doneWhen = 0;
   StreamSubscription<void>? _tickerSubscription;
 
-  /// Create a [TimerCubit] that counts down [initial] seconds.
-  TimerCubit(this.initial) : super(initial);
+  /// Create a [TimerCubit] that counts down `refreshRate` seconds from [prefs].
+  TimerCubit(this.prefs) : super(prefs.state.refreshRate) {
+    _prefSubscription = prefs.stream.listen((_) => restart());
+  }
 
   @override
   Future<void> close() {
     stop();
+    _prefSubscription.cancel();
     return super.close();
   }
 

@@ -1,17 +1,30 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'bloc/gas_cubit.dart';
+import 'bloc/pref_cubit.dart';
 import 'bloc/timer_cubit.dart';
 import 'views/dashboard.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: kIsWeb
+        ? HydratedStorage.webStorageDirectory
+        : await getApplicationDocumentsDirectory(),
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  static final TimerCubit _timer = TimerCubit(5);
+  static final PrefCubit _prefs = PrefCubit();
+  static final TimerCubit _timer = TimerCubit(_prefs);
 
   const MyApp({Key? key}) : super(key: key);
 
@@ -19,6 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => _prefs),
         BlocProvider(create: (_) => _timer),
         BlocProvider(create: (_) => GasCubit(_timer)),
       ],

@@ -1,6 +1,10 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:gastracker/bloc/pref_cubit.dart';
 import 'package:gastracker/bloc/timer_cubit.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+
+import 'pref_cubit_test.dart';
 
 void main() {
   group('ticker', () {
@@ -9,12 +13,20 @@ void main() {
   });
 
   group('TimerCubit', () {
-    test('has initial value of seconds passed in',
-        () => expect(TimerCubit(5).state, equals(5)));
+    registerFallbackValue(const PrefState());
+    final prefCubit = MockPrefCubit();
+
+    void mockPrefListener(Stream<PrefState> s) =>
+        whenListen(prefCubit, s, initialState: const PrefState(refreshRate: 5));
+
+    mockPrefListener(const Stream<PrefState>.empty());
+
+    test('has initial value of PrefState refreshRate',
+        () => expect(TimerCubit(prefCubit).initial, equals(5)));
 
     blocTest<TimerCubit, int>(
       'reset returns to initial value',
-      build: () => TimerCubit(5),
+      build: () => TimerCubit(prefCubit),
       act: (cubit) {
         cubit.start();
         Future.delayed(const Duration(milliseconds: 2100), cubit.reset);
@@ -25,7 +37,7 @@ void main() {
 
     blocTest<TimerCubit, int>(
       'produces values when started',
-      build: () => TimerCubit(5),
+      build: () => TimerCubit(prefCubit),
       act: (cubit) => cubit.start(),
       expect: () => [4, 3],
       wait: const Duration(seconds: 2),
@@ -33,7 +45,7 @@ void main() {
 
     blocTest<TimerCubit, int>(
       "doesn't produce values when stopped",
-      build: () => TimerCubit(5),
+      build: () => TimerCubit(prefCubit),
       act: (cubit) {
         cubit.start();
         Future.delayed(const Duration(milliseconds: 1100), cubit.stop);
@@ -44,7 +56,7 @@ void main() {
 
     blocTest<TimerCubit, int>(
       'continues when starting after stopped',
-      build: () => TimerCubit(5),
+      build: () => TimerCubit(prefCubit),
       act: (cubit) {
         cubit.start();
         Future.delayed(const Duration(milliseconds: 1100), cubit.stop);
@@ -52,6 +64,20 @@ void main() {
       },
       expect: () => [4, 3, 2],
       wait: const Duration(seconds: 4),
+    );
+
+    blocTest<TimerCubit, int>(
+      'restarts with new refresh rate when PrefCubit updated',
+      build: () {
+        mockPrefListener(Stream.fromFuture(Future.delayed(
+          const Duration(milliseconds: 1100),
+          () => const PrefState(refreshRate: 20),
+        )));
+        return TimerCubit(prefCubit);
+      },
+      act: (cubit) => cubit.start(),
+      expect: () => [4, 20, 19],
+      wait: const Duration(seconds: 3),
     );
   });
 }

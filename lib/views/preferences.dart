@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../bloc/pref_cubit.dart';
 
 class PrefPage extends StatelessWidget {
   const PrefPage({Key? key}) : super(key: key);
@@ -23,9 +26,9 @@ class PrefPage extends StatelessWidget {
 
 class PrefCard extends StatelessWidget {
   final Icon icon;
-  final Text title;
-  final Text? subtitle;
-  final Widget trailing;
+  final Text Function(PrefState) title;
+  final Text Function(PrefState)? subtitle;
+  final Widget Function(PrefState) trailing;
 
   const PrefCard({
     Key? key,
@@ -38,18 +41,22 @@ class PrefCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: ListTile(
-        leading: SizedBox(
-          height: 48,
-          width: 32,
-          child: icon,
-        ),
-        title: title,
-        subtitle: subtitle,
-        trailing: SizedBox(
-          width: 256,
-          child: trailing,
-        ),
+      child: BlocBuilder<PrefCubit, PrefState>(
+        builder: (BuildContext context, state) {
+          return ListTile(
+            leading: SizedBox(
+              height: 48,
+              width: 32,
+              child: icon,
+            ),
+            title: title(state),
+            subtitle: subtitle?.call(state),
+            trailing: SizedBox(
+              width: 256,
+              child: trailing(state),
+            ),
+          );
+        },
       ),
     );
   }
@@ -62,13 +69,15 @@ class _RefreshRateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return PrefCard(
       icon: const Icon(Icons.alarm),
-      title: const Text('Refresh every'),
-      subtitle: const Text('5 seconds'),
-      trailing: Slider(
-        value: 5,
+      title: (_) => const Text('Refresh every'),
+      subtitle: (state) => Text('${state.refreshRate} seconds'),
+      trailing: (state) => Slider(
+        value: state.refreshRate.toDouble(),
         min: 5,
         max: 60,
-        onChanged: (_) {},
+        onChanged: (double newValue) {
+          context.read<PrefCubit>().setRefreshRate(newValue.round());
+        },
       ),
     );
   }
