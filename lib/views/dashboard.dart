@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/gascard.dart';
+import '../widgets/status_indicator.dart';
 import '../widgets/timer_appbar.dart';
 import 'preferences.dart';
 
@@ -17,7 +18,12 @@ class DashboardPage extends StatelessWidget {
           child: TimerProgressBar(),
         ),
       ),
-      body: const _GasCards(),
+      body: Stack(
+        children: const [
+          StatusIndicator(),
+          _GasCards(),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push<void>(
           context,
