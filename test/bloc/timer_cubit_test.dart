@@ -1,8 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:gastracker/bloc/pref_cubit.dart';
 import 'package:gastracker/bloc/timer_cubit.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:test/test.dart';
 
 import 'pref_cubit_test.dart';
 
@@ -13,6 +13,8 @@ void main() {
   });
 
   group('TimerCubit', () {
+    TestWidgetsFlutterBinding.ensureInitialized();
+
     registerFallbackValue(const PrefState());
     final prefCubit = MockPrefCubit();
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'pref_cubit.dart';
@@ -8,7 +9,7 @@ import 'pref_cubit.dart';
 Stream<void> ticker({required int ticks}) =>
     Stream<void>.periodic(const Duration(seconds: 1)).take(ticks);
 
-class TimerCubit extends Cubit<int> {
+class TimerCubit extends Cubit<int> with WidgetsBindingObserver {
   final PrefCubit prefs;
   late final StreamSubscription<PrefState> _prefSubscription;
 
@@ -18,12 +19,14 @@ class TimerCubit extends Cubit<int> {
 
   /// Create a [TimerCubit] that counts down `refreshRate` seconds from [prefs].
   TimerCubit(this.prefs) : super(prefs.state.refreshRate) {
+    WidgetsBinding.instance!.addObserver(this);
     _prefSubscription = prefs.stream.listen((_) => restart());
   }
 
   @override
   Future<void> close() {
     stop();
+    WidgetsBinding.instance!.removeObserver(this);
     _prefSubscription.cancel();
     return super.close();
   }
@@ -45,4 +48,18 @@ class TimerCubit extends Cubit<int> {
   }
 
   void _tick(void _) => emit(state - 1);
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        start();
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+        stop();
+        break;
+    }
+  }
 }
