@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../repositories/gas_info.dart';
 import '../services/etherscan/gastracker.dart';
+import 'pref_cubit.dart';
 import 'timer_cubit.dart';
 
 part 'gas_cubit.freezed.dart';
@@ -22,6 +23,8 @@ class GasState with _$GasState {
 }
 
 class GasCubit extends Cubit<GasState> {
+  final PrefCubit prefs;
+
   final TimerCubit timer;
   late final StreamSubscription timerSubscription;
 
@@ -35,7 +38,8 @@ class GasCubit extends Cubit<GasState> {
     }
   }
 
-  GasCubit(this.timer) : super(const GasState(status: GasStatus.failure)) {
+  GasCubit(this.prefs, this.timer)
+      : super(const GasState(status: GasStatus.failure)) {
     fetchGas().whenComplete(() {
       timer.start();
       timerSubscription = timer.stream.listen(onTimerChanged);
@@ -53,7 +57,7 @@ class GasCubit extends Cubit<GasState> {
     emit(state.copyWith(isLoading: true));
 
     try {
-      final oracle = await getGasInfo();
+      final oracle = await getGasInfo(apiKey: prefs.state.etherscanKey);
       final info = GasInfo.fromOracle(oracle);
       emit(GasState(status: GasStatus.success, info: info));
     } catch (_) {

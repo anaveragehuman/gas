@@ -10,6 +10,7 @@ class PrefState with _$PrefState {
   /// How often to poll for new data, in seconds.
   const factory PrefState({
     @Default(5) final int refreshRate,
+    final String? etherscanKey,
   }) = _PrefState;
 
   factory PrefState.fromJson(Map<String, dynamic> json) =>
@@ -26,4 +27,6 @@ class PrefCubit extends HydratedCubit<PrefState> {
   Map<String, dynamic>? toJson(PrefState state) => state.toJson();
 
   void setRefreshRate(int rate) => emit(state.copyWith(refreshRate: rate));
+
+  void setEtherscanKey(String? key) => emit(state.copyWith(etherscanKey: key));
 }

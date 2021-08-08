@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/pref_cubit.dart';
@@ -27,6 +28,7 @@ class PrefPage extends StatelessWidget {
           child: Column(
             children: const [
               _RefreshRateCard(),
+              _EtherscanKeyCard(),
             ],
           ),
         ),
@@ -39,7 +41,7 @@ class PrefCard<T> extends StatelessWidget {
   final Icon icon;
   final Text Function(T?) title;
   final Text Function(T?)? subtitle;
-  final T Function(PrefState) initialValue;
+  final T? Function(PrefState) initialValue;
   final void Function(PrefCubit, T?) onSaved;
   final Widget Function(FormFieldState<T>) trailing;
 
@@ -99,6 +101,54 @@ class _RefreshRateCard extends StatelessWidget {
         min: 5,
         max: 60,
         onChanged: (newValue) => state.didChange(newValue.toInt()),
+      ),
+    );
+  }
+}
+
+class _EtherscanKeyCard extends StatefulWidget {
+  const _EtherscanKeyCard({Key? key}) : super(key: key);
+
+  @override
+  State<_EtherscanKeyCard> createState() => _EtherscanKeyCardState();
+}
+
+class _EtherscanKeyCardState extends State<_EtherscanKeyCard> {
+  bool initialized = false;
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!initialized) {
+      _controller.text = context.read<PrefCubit>().state.etherscanKey ?? '';
+      initialized = true;
+    }
+
+    return PrefCard<String>(
+      icon: const Icon(Icons.vpn_key),
+      title: (_) => const Text('API Key'),
+      subtitle: (_) => const Text('Etherscan'),
+      initialValue: (_) => null,
+      onSaved: (prefCubit, _) {
+        final text = _controller.text;
+        prefCubit.setEtherscanKey(text.isEmpty ? null : text);
+      },
+      trailing: (_) => TextField(
+        controller: _controller,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[A-Z\d]')),
+        ],
+        textCapitalization: TextCapitalization.characters,
+        decoration: const InputDecoration(
+          isDense: true,
+          border: OutlineInputBorder(),
+        ),
       ),
     );
   }

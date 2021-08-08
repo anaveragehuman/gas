@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => _prefs),
         BlocProvider(create: (_) => _timer),
-        BlocProvider(create: (_) => GasCubit(_timer)),
+        BlocProvider(create: (_) => GasCubit(_prefs, _timer)),
       ],
       child: MaterialApp(
         title: 'Gas Tracker',
