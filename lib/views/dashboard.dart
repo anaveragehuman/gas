@@ -21,7 +21,7 @@ class DashboardPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (_) => const PrefPage()),
+          MaterialPageRoute(builder: (_) => PrefPage()),
         ),
         child: const Icon(Icons.settings),
       ),
